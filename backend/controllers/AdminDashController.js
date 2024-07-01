@@ -60,11 +60,11 @@ const getPatientsTreatedCount = async (req, res) => {
         path: "appointmentId",
         populate: {
           path: "doctorId",
-          match: { _id: mongoose.Types.ObjectId(doctorId) },
+          match: { _id: new mongoose.Types.ObjectId(doctorId) },
         },
       })
       .then((prescriptions) =>
-        prescriptions.filter((pre) => pre.appointmentId.doctorId !== null)
+        prescriptions.filter((pre) => pre.appointmentId.doctorId !== null),
       );
 
     res.json({

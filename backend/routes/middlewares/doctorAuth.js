@@ -18,7 +18,7 @@ async function doctorAuth(req, res, next) {
     }
 
     const doctor = await Doctor.findOne({
-      userId: mongoose.Types.ObjectId(payload.id),
+      userId: new mongoose.Types.ObjectId(payload.id),
     });
 
     if (!doctor) {

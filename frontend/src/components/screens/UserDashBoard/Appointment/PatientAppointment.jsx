@@ -61,7 +61,7 @@ function PatientAppointment() {
 
   const addAppointmentFormSubmitted = async (event) => {
     event.preventDefault();
-    console.log("SUbmitted")
+    console.log("SUbmitted");
     // const form = document.forms.addAppointment;
     // let reqObj = {
     //   appDate: form.appDate.value,
@@ -113,7 +113,7 @@ function PatientAppointment() {
     // newSlotList[newSlotList.length] = "hello"
     // setAvailableSlots(newSlotList);
     if (doctorSelected) {
-      console.log("TOKEN", localStorage.getItem("token"))
+      console.log("TOKEN", localStorage.getItem("token"));
       let response = await axios.post(
         `http://localhost:8080/api/appointments`,
         {
@@ -125,13 +125,13 @@ function PatientAppointment() {
           headers: {
             authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (response.data.message == "success") {
-        getAvailableSlot();
-        window.alert("success add")
-        setAvailableSlot(response.data.appointments)
+        getAvailableSlots();
+        window.alert("success add");
+        setAvailableSlots(response.data.appointments);
         let aptms = response.data.appointments;
 
         let slots = aptms.map((apt) => apt.appointmentTime);
@@ -166,7 +166,7 @@ function PatientAppointment() {
           headers: {
             authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       if (response.data.message == "success") {
         // getAvailableSlot();
@@ -210,7 +210,7 @@ function PatientAppointment() {
         data: {
           appointmentId: appId,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       // getAvailableSlot();
