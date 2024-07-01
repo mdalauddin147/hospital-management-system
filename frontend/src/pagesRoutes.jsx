@@ -132,6 +132,22 @@ export default function PageRoutes() {
             path="edit/:id"
             element={
               <ProtectedAdminRoute>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
                 <Editmedicine />
               </ProtectedAdminRoute>
             }
