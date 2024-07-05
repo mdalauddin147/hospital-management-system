@@ -114,7 +114,7 @@ export default function Sidebar({ open, handleDrawerClose, handleDrawerOpen }) {
           <ListItemButton
             selected={!selectedItem ? true : false}
             component={NavLink}
-            to="/dashboard"
+            to="/"
             style={{ textDecoration: "none", color: "white" }}
             sx={{
               minHeight: 48,

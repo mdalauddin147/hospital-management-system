@@ -21,7 +21,7 @@ export default function DoctorDashboard() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response?.data?.totalAppointments) {
       setAppsTodayCount(response?.data?.totalAppointments);
@@ -38,7 +38,7 @@ export default function DoctorDashboard() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response?.data?.treatedPatients) {
       setPatientsTreatedCount(response?.data?.treatedPatients);
@@ -52,16 +52,16 @@ export default function DoctorDashboard() {
       {
         isTimeSlotAvailable: false,
         appDate: moment(new Date()).format("YYYY-MM-DD"),
+        docID: currentUser.userId,
       },
       {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       let aptms = response.data.appointments;
-      console.log("aptms", aptms);
 
       setBookedAppointments(aptms);
       // console.log(aptms);
@@ -79,20 +79,20 @@ export default function DoctorDashboard() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       let respPrescription = response.data.prescriptions;
       let newResp = respPrescription.sort((a, b) => {
         const timeA = new Date(
           `${moment(
-            new Date(a.appointmentId.appointmentDate.slice(0, -1))
-          ).format("MM/DD/YYYY")} ${a.appointmentId.appointmentTime}`
+            new Date(a.appointmentId.appointmentDate.slice(0, -1)),
+          ).format("MM/DD/YYYY")} ${a.appointmentId.appointmentTime}`,
         );
         const timeB = new Date(
           `${moment(
-            new Date(b.appointmentId.appointmentDate.slice(0, -1))
-          ).format("MM/DD/YYYY")} ${b.appointmentId.appointmentTime}`
+            new Date(b.appointmentId.appointmentDate.slice(0, -1)),
+          ).format("MM/DD/YYYY")} ${b.appointmentId.appointmentTime}`,
         );
         console.log(timeA);
         return timeB - timeA;

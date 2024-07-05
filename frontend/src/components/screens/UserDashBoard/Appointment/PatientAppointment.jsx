@@ -19,7 +19,6 @@ function PatientAppointment() {
 
   const [clickedTimeSlot, setClickedTimeSlot] = useState("");
 
-  // const [dateClicked,setDateClicked] = useState(dayjs());
   const [date, setDate] = useState(new Date());
   const [availableSlots, setAvailableSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
@@ -50,9 +49,8 @@ function PatientAppointment() {
     setErrorDialogueBoxOpen(false);
   };
 
-  const [openDialgueBox, setOpenDialgueBox] = React.useState(false);
+  const [openDialgueBox, setOpenDialgueBox] = useState(false);
 
-  //fhandler function for bootstrap dialogue box
   const handleClickOpen = () => {
     setOpenDialgueBox(true);
   };
@@ -62,65 +60,18 @@ function PatientAppointment() {
 
   const addAppointmentFormSubmitted = async (event) => {
     event.preventDefault();
-    console.log("SUbmitted");
     const form = document.forms.addAppointment;
-    let reqObj = {
+    const reqObj = {
       appDate: form.appDate.value,
       appTime: form.appTime.value,
       doctorId: form.doctor.value,
       patientId: form.patient.value,
     };
-    console.log("reqObj", reqObj);
 
-    let response = await axios.put(
-      `http://localhost:8080/api/appointments/`,
-      reqObj,
-      {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      },
-    );
-    if (response.data.message == "success") {
-      // getAvailableSlot();
-      // window.alert("success add")
-      getAvailableSlots();
-      getBookedSlots();
-    }
-
-    handleClose();
-  };
-
-  const getformDate = (mydate) => {
-    const parts = mydate.split("-");
-    const d = new Date(+parts[0], parts[1] - 1, +parts[2], 12);
-    return d;
-  };
-
-  const formatDateForDateInput = (dateOfJoining) => {
-    dateOfJoining = moment(new Date(dateOfJoining)).format("YYYY-MM-DD");
-    // console.log("dateOfJoining",dateOfJoining);
-    return dateOfJoining;
-  };
-
-  const slotClicked = (slot) => {
-    // console.log(slot)
-    setClickedTimeSlot(slot);
-    handleClickOpen();
-  };
-
-  const getAvailableSlots = async () => {
-    // let newSlotList = availableSlots;
-    // newSlotList[newSlotList.length] = "hello"
-    // setAvailableSlots(newSlotList);
-    if (doctorSelected) {
-      let response = await axios.post(
-        `http://localhost:8080/api/appointments`,
-        {
-          isTimeSlotAvailable: true,
-          appDate: formatDateForDateInput(date),
-          doctorID: doctorSelected,
-        },
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/appointments/`,
+        reqObj,
         {
           headers: {
             authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -128,23 +79,65 @@ function PatientAppointment() {
         },
       );
 
-      if (response.data.message == "success") {
+      if (response.data.message === "success") {
         getAvailableSlots();
-        toast("Appointment added successfully !!");
-        setAvailableSlots(response.data.appointments);
-        let aptms = response.data.appointments;
-
-        let slots = aptms.map((apt) => apt.appointmentTime);
-        slots.sort((a, b) => {
-          const timeA = new Date(`01/01/2000 ${a}`);
-          const timeB = new Date(`01/01/2000 ${b}`);
-          return timeA - timeB;
-        });
-
-        setAvailableSlots(slots);
+        getBookedSlots();
+        toast.success("Appointment added successfully!");
       } else {
-        toast.error("Error getting appointment");
-        // window.alert("error add")
+        toast.error("Error adding appointment");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error adding appointment");
+    } finally {
+      handleClose();
+    }
+  };
+
+  const getformDate = (mydate) => {
+    const parts = mydate.split("-");
+    return new Date(+parts[0], parts[1] - 1, +parts[2], 12);
+  };
+
+  const formatDateForDateInput = (dateOfJoining) => {
+    return moment(new Date(dateOfJoining)).format("YYYY-MM-DD");
+  };
+
+  const slotClicked = (slot) => {
+    setClickedTimeSlot(slot);
+    handleClickOpen();
+  };
+
+  const getAvailableSlots = async () => {
+    if (doctorSelected) {
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/api/appointments`,
+          {
+            isTimeSlotAvailable: true,
+            appDate: formatDateForDateInput(date),
+            doctorID: doctorSelected,
+          },
+          {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+
+        if (response.data.message === "success") {
+          const aptms = response.data.appointments;
+          const slots = aptms.map((apt) => apt.appointmentTime);
+          slots.sort(
+            (a, b) => new Date(`01/01/2000 ${a}`) - new Date(`01/01/2000 ${b}`),
+          );
+          setAvailableSlots(slots);
+        } else {
+          toast.error("Error getting available slots");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Error getting available slots");
       }
     } else {
       setAvailableSlots([]);
@@ -152,47 +145,41 @@ function PatientAppointment() {
   };
 
   const getBookedSlots = async () => {
-    // let newSlotList = availableSlots;
-    // newSlotList[newSlotList.length] = "hello"
-    // setAvailableSlots(newSlotList);
     if (doctorSelected) {
-      let response = await axios.post(
-        `http://localhost:8080/api/appointments`,
-        {
-          isTimeSlotAvailable: false,
-          appDate: formatDateForDateInput(date),
-          doctorID: doctorSelected,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
+      try {
+        const response = await axios.post(
+          `http://localhost:8080/api/appointments`,
+          {
+            isTimeSlotAvailable: false,
+            appDate: formatDateForDateInput(date),
+            doctorID: doctorSelected,
           },
-        },
-      );
-      if (response.data.message == "success") {
-        // getAvailableSlot();
-        // window.alert("success add")
-        // setAvailableSlot(response.data.appointments)
-        let aptms = response.data.appointments;
-        // console.log("aptms", aptms);
-        let sortedAptms = aptms.sort((a, b) => {
-          const timeA = new Date(`01/01/2000 ${a["appointmentTime"]}`);
-          const timeB = new Date(`01/01/2000 ${b["appointmentTime"]}`);
-          return timeA - timeB;
-        });
+          {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
 
-        setBookedAppointments(sortedAptms);
-        console.log(aptms);
-        let slots = aptms.map((apt) => apt.appointmentTime);
-        slots.sort((a, b) => {
-          const timeA = new Date(`01/01/2000 ${a}`);
-          const timeB = new Date(`01/01/2000 ${b}`);
-          return timeA - timeB;
-        });
-
-        setBookedSlots(slots);
-      } else {
-        // window.alert("error add")
+        if (response.data.message === "success") {
+          const aptms = response.data.appointments;
+          const sortedAptms = aptms.sort(
+            (a, b) =>
+              new Date(`01/01/2000 ${a.appointmentTime}`) -
+              new Date(`01/01/2000 ${b.appointmentTime}`),
+          );
+          setBookedAppointments(sortedAptms);
+          const slots = aptms.map((apt) => apt.appointmentTime);
+          slots.sort(
+            (a, b) => new Date(`01/01/2000 ${a}`) - new Date(`01/01/2000 ${b}`),
+          );
+          setBookedSlots(slots);
+        } else {
+          toast.error("Error getting booked slots");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Error getting booked slots");
       }
     } else {
       setBookedSlots([]);
@@ -201,72 +188,81 @@ function PatientAppointment() {
   };
 
   const deleteBookedSlots = async (appId) => {
-    console.log("delete slot with id", appId);
-    let response = await axios.delete(
-      `http://localhost:8080/api/appointments/`,
-      {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("token")}`,
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/api/appointments/`,
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          data: {
+            appointmentId: appId,
+          },
         },
-        data: {
-          appointmentId: appId,
-        },
-      },
-    );
-    if (response.data.message == "success") {
-      // getAvailableSlot();
-      // window.alert("success add")
-      getAvailableSlots();
-      getBookedSlots();
+      );
+
+      if (response.data.message === "success") {
+        getAvailableSlots();
+        getBookedSlots();
+      } else {
+        toast.error("Error deleting appointment");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting appointment");
     }
   };
 
   const getDoctorList = async () => {
-    let response = await axios.get(`http://localhost:8080/api/doctors`, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    let doctors = response.data;
-    if (doctors.length > 0) {
-      // getAvailableSlot();
-      // window.alert("success add")
-      // setAvailableSlot(response.data.appointments)
-      // console.log("++++",doctors);
-      // doctors.sort(function(a, b){
-      //     return a.zzz - b.id;
-      // });
+    try {
+      const response = await axios.get(`http://localhost:8080/api/doctors`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const doctors = response.data;
       if (!departmentSelected) {
         setDoctorList(doctors);
       } else {
-        // setDoctorList([]);
-        let filterdDocs = doctors.filter((doc) => {
-          return doc.department == departmentSelected;
-        });
-        setDoctorList(filterdDocs);
+        const filteredDocs = doctors.filter(
+          (doc) => doc.department === departmentSelected,
+        );
+        setDoctorList(filteredDocs);
       }
-    } else {
-      // window.alert("error add")
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching doctors");
     }
   };
 
   const getDepartmentList = async () => {
-    let response = await axios.get(`http://localhost:8080/api/departments`, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    let departments = response.data.departments;
-    if (departments.length > 0) {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/departments`,
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      const departments = response.data.departments;
       setDepartmentList(departments);
-    } else {
-      // window.alert("error add")
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching departments");
     }
   };
 
   const getPatients = async () => {
-    const response = await axios.get("http://localhost:8080/api/patients");
-    setPatientList(response.data);
+    try {
+      const response = await axios.get("http://localhost:8080/api/patients");
+      setPatientList(response.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching patients");
+    }
   };
 
   useEffect(() => {
@@ -284,7 +280,7 @@ function PatientAppointment() {
       sx={{ flexGrow: 1, p: 3 }}
     >
       <div>
-        <h3 className={styles.pageTitle}> Appointments</h3>
+        <h3 className={styles.pageTitle}>Appointments</h3>
       </div>
 
       <div id={styles.slotGrid}>
@@ -295,61 +291,51 @@ function PatientAppointment() {
           <h4>Select Date and Doctor</h4>
           <div className="my-4 row">
             <div className="col-12">
-              <label for="department" className="col-sm-3 col-form-label ">
-                Department:{" "}
+              <label htmlFor="department" className="col-sm-3 col-form-label">
+                Department:
               </label>
               <select
                 name="department"
                 id="department"
-                class="col-form-select col-sm-7"
+                className="col-form-select col-sm-7"
                 aria-label="Default select example"
                 onChange={handleDepartmentChange}
               >
-                <option selected value="">
-                  All
-                </option>
-                {departmentList.map((sp) => {
-                  return <option value={sp}>{sp}</option>;
-                })}
+                <option value="">All</option>
+                {departmentList.map((sp) => (
+                  <option key={sp} value={sp}>
+                    {sp}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
           <div className="my-4 row">
             <div className="col-12">
-              <label for="doctor" className="col-sm-3 col-form-label ">
-                Doctor:{" "}
+              <label htmlFor="doctor" className="col-sm-3 col-form-label">
+                Doctor:
               </label>
               <select
                 name="doctor"
                 id="doctor"
-                class="col-form-select col-sm-7"
+                className="col-form-select col-sm-7"
                 aria-label="Default select example"
                 required
                 onChange={handleDoctorChange}
               >
                 <option value="">Choose Doctor</option>
-                {doctorList.map((doctor) => {
-                  if (doctorSelected == doctor._id) {
-                    return (
-                      <option value={doctor._id} selected>
-                        {doctor.userId.firstName} {doctor.userId.lastName}
-                      </option>
-                    );
-                  } else {
-                    return (
-                      <option value={doctor._id}>
-                        {doctor.userId.firstName} {doctor.userId.lastName}
-                      </option>
-                    );
-                  }
-                })}
+                {doctorList.map((doctor) => (
+                  <option key={doctor._id} value={doctor._id}>
+                    {doctor.userId.firstName} {doctor.userId.lastName}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
           <div className="mt-4 row">
             <div className="col-12">
-              <label for="appDate" className="col-sm-3 col-form-label ">
-                Date:{" "}
+              <label htmlFor="appDate" className="col-sm-3 col-form-label">
+                Date:
               </label>
               <input
                 id="appDate"
@@ -361,31 +347,24 @@ function PatientAppointment() {
               />
             </div>
           </div>
-          <div className=" row">
-            {/* <div className="col-12"> */}
-
-            {/* </div> */}
+          <div className="row">
             {availableSlots.length > 0 ? (
               <div className={styles.availableSlotsHeader}>
-                {" "}
-                <h4 className="mt-5">Available Slots</h4>{" "}
+                <h4 className="mt-5">Available Slots</h4>
                 <p>Click a slot to book appointments</p>
               </div>
-            ) : (
-              <div></div>
-            )}
+            ) : null}
 
             <div className="d-flex flex-wrap">
-              {availableSlots.map((slot) => {
-                return (
-                  <div
-                    onClick={() => slotClicked(slot)}
-                    className={styles.slotCard}
-                  >
-                    {slot}
-                  </div>
-                );
-              })}
+              {availableSlots.map((slot) => (
+                <div
+                  key={slot}
+                  onClick={() => slotClicked(slot)}
+                  className={styles.slotCard}
+                >
+                  {slot}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -404,9 +383,7 @@ function PatientAppointment() {
             getBookedSlots={getBookedSlots}
           />
         </div>
-      ) : (
-        <div></div>
-      )}
+      ) : null}
 
       <BootstrapDialog
         onClose={handleClose}

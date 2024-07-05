@@ -77,7 +77,7 @@ function DoctorAppointment() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       // getAvailableSlot();
@@ -123,7 +123,7 @@ function DoctorAppointment() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       // getAvailableSlot();
@@ -159,7 +159,7 @@ function DoctorAppointment() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       // getAvailableSlot();
@@ -199,7 +199,7 @@ function DoctorAppointment() {
         data: {
           appointmentId: appId,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       // getAvailableSlot();
