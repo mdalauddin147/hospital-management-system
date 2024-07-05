@@ -12,6 +12,7 @@ import {
 import DialogContent from "@mui/material/DialogContent";
 import AppointmentForm from "../Forms/AppointmentForm";
 import AppointmentTable from "../../../MUITable/AppointmentTable";
+import { toast } from "react-toastify";
 
 function PatientAppointment() {
   const navigate = useNavigate();
@@ -62,32 +63,32 @@ function PatientAppointment() {
   const addAppointmentFormSubmitted = async (event) => {
     event.preventDefault();
     console.log("SUbmitted");
-    // const form = document.forms.addAppointment;
-    // let reqObj = {
-    //   appDate: form.appDate.value,
-    //   appTime: form.appTime.value,
-    //   doctorId: form.doctor.value,
-    //   patientId: form.patient.value,
-    // };
-    // // console.log("reqObj",reqObj);
+    const form = document.forms.addAppointment;
+    let reqObj = {
+      appDate: form.appDate.value,
+      appTime: form.appTime.value,
+      doctorId: form.doctor.value,
+      patientId: form.patient.value,
+    };
+    console.log("reqObj", reqObj);
 
-    // let response = await axios.put(
-    //   `http://localhost:8080/api/appointments/`,
-    //   reqObj,
-    //   {
-    //     headers: {
-    //       authorization: `Bearer ${localStorage.getItem("token")}`,
-    //     },
-    //   }
-    // );
-    // if (response.data.message == "success") {
-    //   // getAvailableSlot();
-    //   // window.alert("success add")
-    //   getAvailableSlots();
-    //   getBookedSlots();
-    // }
+    let response = await axios.put(
+      `http://localhost:8080/api/appointments/`,
+      reqObj,
+      {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      },
+    );
+    if (response.data.message == "success") {
+      // getAvailableSlot();
+      // window.alert("success add")
+      getAvailableSlots();
+      getBookedSlots();
+    }
 
-    // handleClose();
+    handleClose();
   };
 
   const getformDate = (mydate) => {
@@ -113,7 +114,6 @@ function PatientAppointment() {
     // newSlotList[newSlotList.length] = "hello"
     // setAvailableSlots(newSlotList);
     if (doctorSelected) {
-      console.log("TOKEN", localStorage.getItem("token"));
       let response = await axios.post(
         `http://localhost:8080/api/appointments`,
         {
@@ -130,7 +130,7 @@ function PatientAppointment() {
 
       if (response.data.message == "success") {
         getAvailableSlots();
-        window.alert("success add");
+        toast("Appointment added successfully !!");
         setAvailableSlots(response.data.appointments);
         let aptms = response.data.appointments;
 
@@ -143,6 +143,7 @@ function PatientAppointment() {
 
         setAvailableSlots(slots);
       } else {
+        toast.error("Error getting appointment");
         // window.alert("error add")
       }
     } else {
