@@ -25,7 +25,7 @@ export default function AdminDashboard() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     let count = response.data.count;
     if (count) {
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
 
   const getBookedSlots = async () => {
     let response = await axios.post(
-      `http://localhost:3001/appointments`,
+      `http://localhost:8080/api/appointments`,
       {
         isTimeSlotAvailable: false,
         appDate: moment(new Date()).format("YYYY-MM-DD"),
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       let aptms = response.data.appointments;

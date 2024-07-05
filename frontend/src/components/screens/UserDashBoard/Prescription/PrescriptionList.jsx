@@ -52,7 +52,7 @@ function PrescriptionList() {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
 
     if (response.data.message == "success") {
@@ -60,13 +60,13 @@ function PrescriptionList() {
       let newResp = respPrescription.sort((a, b) => {
         const timeA = new Date(
           `${moment(
-            new Date(a.appointmentId.appointmentDate.slice(0, -1))
-          ).format("MM/DD/YYYY")} ${a.appointmentId.appointmentTime}`
+            new Date(a.appointmentId.appointmentDate.slice(0, -1)),
+          ).format("MM/DD/YYYY")} ${a.appointmentId.appointmentTime}`,
         );
         const timeB = new Date(
           `${moment(
-            new Date(b.appointmentId.appointmentDate.slice(0, -1))
-          ).format("MM/DD/YYYY")} ${b.appointmentId.appointmentTime}`
+            new Date(b.appointmentId.appointmentDate.slice(0, -1)),
+          ).format("MM/DD/YYYY")} ${b.appointmentId.appointmentTime}`,
         );
         console.log(timeA);
         return timeB - timeA;
@@ -89,7 +89,7 @@ function PrescriptionList() {
         <div className="content">
           <h4 className="page-title">Prescription</h4>
           <form
-            action="/prescriptions"
+            action="/api/prescriptions"
             name="prescriptionFilter"
             className={currentUser.userType == "Patient" ? "hide" : ""}
           >

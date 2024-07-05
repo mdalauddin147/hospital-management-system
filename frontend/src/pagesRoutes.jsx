@@ -72,8 +72,7 @@ export default function PageRoutes() {
           path="users"
           element={
             <ProtectedAdminRoute>
-              {" "}
-              <User />{" "}
+              <User />
             </ProtectedAdminRoute>
           }
         >
@@ -86,8 +85,7 @@ export default function PageRoutes() {
           path="patients"
           element={
             <ProtectedAdminRoute>
-              {" "}
-              <Patient />{" "}
+              <Patient />
             </ProtectedAdminRoute>
           }
         >
@@ -100,8 +98,7 @@ export default function PageRoutes() {
           path="doctors"
           element={
             <ProtectedAdminRoute>
-              {" "}
-              <Doctor />{" "}
+              <Doctor />
             </ProtectedAdminRoute>
           }
         >
@@ -123,8 +120,7 @@ export default function PageRoutes() {
             path="add"
             element={
               <ProtectedAdminRoute>
-                {" "}
-                <Addmedicine />{" "}
+                <Addmedicine />
               </ProtectedAdminRoute>
             }
           />

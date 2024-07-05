@@ -32,7 +32,7 @@ function createData(
   appointmentDate,
   appointmentTime,
   actionsID,
-  patientID
+  patientID,
 ) {
   return {
     patientName,
@@ -51,7 +51,6 @@ function createData(
 //     createData('Alice Johnson', 'Dr. Davis', '2023-03-26', '4:00 PM', ''),
 //     createData('Chris Lee', 'Dr. Martin', '2023-03-28', '3:30 PM', ''),
 //     createData('Sarah Davis', 'Dr. Brown', '2023-03-30', '9:45 AM', ''),
-
 // ];
 
 export default function DoctorAppointmentTable({
@@ -104,15 +103,14 @@ export default function DoctorAppointmentTable({
       prescribedMed: JSON.parse(form.prescribedMed.value),
     };
 
-    console.log(reqObj);
     let response = await axios.post(
-      `http://localhost:3001/prescription/`,
+      `http://localhost:8080/api/prescription`,
       reqObj,
       {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     if (response.data.message == "success") {
       getAvailableSlots();
@@ -132,7 +130,7 @@ export default function DoctorAppointmentTable({
   const formatDateForDateInput = (dateOfJoining) => {
     // console.log("dateOfJoining",dateOfJoining);
     dateOfJoining = moment(new Date(dateOfJoining.slice(0, -1))).format(
-      "YYYY-MM-DD"
+      "YYYY-MM-DD",
     );
     // console.log("dateOfJoining",dateOfJoining);
     return dateOfJoining;
@@ -140,12 +138,12 @@ export default function DoctorAppointmentTable({
 
   const setFormProperties = async (appID) => {
     const response = await axios.get(
-      `http://localhost:3001/appointments/${appID}`,
+      `http://localhost:8080/api/appointments/${appID}`,
       {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      }
+      },
     );
     let app = response.data.appointment;
     console.log(app);
@@ -168,7 +166,7 @@ export default function DoctorAppointmentTable({
       formatDateForDateInput(apt.appointmentDate),
       apt.appointmentTime,
       apt._id,
-      apt.patientId._id
+      apt.patientId._id,
     );
   });
 
