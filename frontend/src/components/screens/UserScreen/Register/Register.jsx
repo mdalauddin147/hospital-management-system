@@ -33,27 +33,35 @@ function Register() {
       userType,
     };
 
-    // Attach Frontend With Backend Fetching Data using axios
-    const response = await axios.post(
-      "http://localhost:8080/api/register",
-      user
-    );
-    if (response.status === 200) {
-      toast.success("User Added");
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPassword("");
-      setUserType("");
-      setUsername("");
-      navigate("/");
+    try {
+      // Attach Frontend With Backend Fetching Data using axios
+      const response = await axios.post(
+        "http://localhost:8080/api/register",
+        user,
+      );
+      if (response.status === 200) {
+        toast.success("Success !! Now check your email and activate account.");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setUserType("");
+        setUsername("");
+        navigate("/");
+      }
+    } catch (err) {
+      // const message =
+      //   err.code === 403
+      //     ? "Please verify your email."
+      //     : "Registration failed !!";
+      toast.error(err?.response?.data.message || "Something went wrong !!");
     }
   };
 
   useEffect(() => {
     if (password.length > 0 && password?.trim()?.length <= 6) {
       setPasswordValidationMessage(
-        "Password Length must be greater than 6 characters"
+        "Password Length must be greater than 6 characters",
       );
     } else {
       setPasswordValidationMessage("");

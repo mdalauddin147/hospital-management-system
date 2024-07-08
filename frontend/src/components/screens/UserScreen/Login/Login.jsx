@@ -34,8 +34,8 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Fetch Login Data
     try {
+      // Fetch Login Data
       const response = await axios.post("http://localhost:8080/api/login", {
         email,
         password,
@@ -49,11 +49,15 @@ function Login() {
         signInUser(user, token);
         navigate("/");
         toast.success("User Login Successfully");
+      } else if (response.status === 403) {
+        toast.error("Please verify your account via email.");
+      } else {
+        toast.error("Something went wrong !!");
       }
     } catch (error) {
       // If login fails, display an error message
       console.error("Error during login:", error);
-      toast.error("Login failed");
+      toast.error(error?.response?.data.message || "Something went wrong !!");
     }
   };
 

@@ -7,6 +7,7 @@ const usercontroller = require("../controllers/userController");
 const logincontroller = require("../controllers/loginController");
 const registercontroller = require("../controllers/registerController");
 
+router.post("/otp");
 router.post("/register", registercontroller.signUp);
 router.get("/verify/:id", registercontroller.verifyUser);
 router.post("/login", logincontroller.loginUser);

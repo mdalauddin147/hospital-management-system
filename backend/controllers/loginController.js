@@ -29,18 +29,23 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const loginValidStatus = isLoginValid(email, password);
+
     if (!loginValidStatus.status) {
       return res
         .status(400)
-        .json({ message: "error", errors: loginValidStatus.errors });
+        .json({ message: "Invalid data !!", errors: loginValidStatus.errors });
     }
 
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "error", errors: ["User not found"] });
+      return res.status(401).json({ message: "User not found !!" });
+    }
+
+    if (!user.activated) {
+      return res.status(403).json({
+        message: "Please verify your email first !!",
+      });
     }
 
     const result = await bcrypt.compare(password, user.password);
@@ -48,7 +53,7 @@ const loginUser = async (req, res) => {
     if (!result) {
       return res
         .status(401)
-        .json({ message: "error", errors: ["Invalid password"] });
+        .json({ message: "Invalid Password", errors: ["Invalid password"] });
     }
 
     const currentUser = {
@@ -61,7 +66,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, userType: user.userType },
       process.env.SECRET_KEY,
-      { expiresIn: "365d" }
+      { expiresIn: "365d" },
     );
     res.json({ message: "success", user: currentUser, token: token });
   } catch (error) {

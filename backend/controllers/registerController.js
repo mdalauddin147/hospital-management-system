@@ -47,7 +47,7 @@ const isUserValid = (newUser) => {
 const saveVerificationToken = async (userId, verificationToken) => {
   await User.findOneAndUpdate(
     { _id: userId },
-    { verificationToken: verificationToken }
+    { verificationToken: verificationToken },
   );
 };
 
@@ -73,7 +73,7 @@ const sendVerificationEmail = async (email, token) => {
     from: process.env.GMAIL_USER,
     to: email,
     subject: "Verify your email address",
-    text: `Please click the following link to verify your email address: http://localhost:8080//api/verify/${token}`,
+    text: `Please click the following link to verify your email address: http://localhost:8080/api/verify/${token}`,
     html: `<p>Please click this link to verify your account:</p> <a href="http://localhost:8080/api/verify/${token}">Verify</a>`,
   };
 
@@ -90,9 +90,14 @@ const sendVerificationEmail = async (email, token) => {
 const signUp = async (req, res) => {
   const newUser = req.body;
 
+  const existingUser = await User.findOne({ email: newUser.email });
+  if (existingUser) {
+    return res.status(403).json({ message: "Please verify your email first." });
+  }
+
   const userValidStatus = isUserValid(newUser);
   if (!userValidStatus.status) {
-    res.json({ message: "error", errors: userValidStatus.errors });
+    res.status(400).json({ message: "error", errors: userValidStatus.errors });
   } else {
     try {
       const userDetails = await User.create({
@@ -133,7 +138,7 @@ const signUp = async (req, res) => {
         res.json({ message: "success" });
       }
     } catch (error) {
-      res.json({ message: "error", errors: [error.message] });
+      res.status(500).json({ message: "error", errors: [error.message] });
     }
   }
 };
@@ -151,7 +156,7 @@ const verifyUser = async (req, res) => {
       {
         activated: true,
         "verificationToken.token": null,
-      }
+      },
     );
 
     if (!user) {
@@ -159,7 +164,89 @@ const verifyUser = async (req, res) => {
       res.status(500).json({ message: "Error verifying account" });
     } else {
       console.log("Email verified");
-      res.send("Email verified");
+      res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .container img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .container p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        .container a {
+            display: inline-block;
+            background: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .container a:hover {
+            background: #0056b3;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .container h1 {
+                font-size: 20px;
+            }
+            .container p {
+                font-size: 14px;
+            }
+            .container a {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://png.pngtree.com/png-vector/20191113/ourmid/pngtree-green-check-mark-icon-flat-style-png-image_1986021.jpg" alt="Success Icon">
+        <h1>Email Verified Successfully</h1>
+        <p>Thank you for verifying your email address. Your account is now active and you can start using all the features of our service.</p>
+        <a href="http://localhost:3000">Login Here</a>
+    </div>
+</body>
+</html>
+          `);
     }
   } catch (error) {
     res.status(500).json({ message: "Error verifying account", error });
