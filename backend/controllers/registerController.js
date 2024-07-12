@@ -70,7 +70,7 @@ const sendVerificationEmail = async (email, token) => {
   });
 
   const mailOptions = {
-    from:`HCS<${process.env.GMAIL_USER}>`,
+    from: process.env.GMAIL_USER,
     to: email,
     subject: "Verify your email address",
     text: `Please click the following link to verify your email address: http://localhost:8080/api/verify/${token}`,
@@ -113,30 +113,28 @@ const signUp = async (req, res) => {
       await saveVerificationToken(userDetails._id, verificationToken);
 
       if (newUser.userType === "Doctor") {
-        const doctorDetails = await Doctor.create({
+        await Doctor.create({
           userId: userDetails._id,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           email: newUser.email,
           username: newUser.email,
         });
-
         await sendVerificationEmail(userDetails.email, verificationToken.token);
-
         res.json({ message: "success" });
       } else if (newUser.userType === "Patient") {
-        const patientDetails = await Patient.create({
+        await Patient.create({
           userId: userDetails._id,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           email: newUser.email,
           username: newUser.email,
         });
-
         await sendVerificationEmail(userDetails.email, verificationToken.token);
-
         res.json({ message: "success" });
       }
+      await sendVerificationEmail(userDetails.email, verificationToken.token);
+      res.json({ message: "success" });
     } catch (error) {
       res.status(500).json({ message: "error", errors: [error.message] });
     }
