@@ -70,7 +70,7 @@ const sendVerificationEmail = async (email, token) => {
   });
 
   const mailOptions = {
-    from: process.env.GMAIL_USER,
+    from:`HCS<${process.env.GMAIL_USER}>`,
     to: email,
     subject: "Verify your email address",
     text: `Please click the following link to verify your email address: http://localhost:8080/api/verify/${token}`,

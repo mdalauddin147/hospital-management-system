@@ -4,12 +4,6 @@
 
 A Health Care PLus System is a comprehensive software solution designed to streamline and automate hospital operations. It encompasses patient management, appointment scheduling, billing, electronic health records (EHR), inventory management, and reporting, enhancing overall healthcare efficiency and patient care.
 
-### Project Details
-
-- **Project Owner:** Muhammad Tahir
-- **Developer:** Usman Asghar
-- **Course Name:** Software Engineering
-- **Technology Stack:** MERN (MongoDB, Express.js, React.js, Node.js)
 
 ## Features
 
@@ -46,25 +40,7 @@ The project harnesses the power of the MERN stack:
 - **React.js:** A JavaScript library for building dynamic and responsive user interfaces.
 - **Node.js:** A server-side JavaScript runtime for executing server-side logic.
 
-
-## Getting Started
-To run the Hwalth Care Plus System locally, follow these steps:
-
-## Prerequisites
-
-Make sure you have the following installed:
-
-- Node.js and npm: [Download and Install Node.js](https://nodejs.org/)
-- MongoDB: [Install MongoDB](https://docs.mongodb.com/manual/installation/)
-
-## Getting Started
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/TahirRajpoot/HealthCarePlus_SE_Project.git
-```
-
+ 
 ### 2. Install Dependencies
 
 #### Backend
@@ -83,62 +59,13 @@ npm install
 
 ### 3. Configure Environment Variables
 
-#### Backend
-
-Create a `.env` file in the `backend` directory and configure the following variables:
-
-```env
-SECRET_KEY = 
-GMAIL_USER = 
-GMAIL_PASS =
-CLIENT_SECRET = 
-CLIENT_ID =
-```
-Re[;ace thes with your gmailid, clientid, gmail password, secret key, client secret
-
-### 4. Run the Application
-
-#### Backend
-
-```bash
-cd backend
-npm start
-```
-
-The backend server will run on http://localhost:8080 by default.
+ 
 
 #### Frontend
 
 ```bash
 cd frontend
 npm start
-```
-
-The frontend development server will run on http://localhost:3000 by default.
-
-### 5. Open in Browser
-
-Open your web browser and navigate to http://localhost:3000 to access the MERN stack application.
-
-## Additional Information
-
-- The backend API routes are available at http://localhost:8080/api/.
-- Make sure MongoDB is running before starting the backend server.
-- You can customize the application by modifying the code in the `frontend` and `backend` directories.
-
-
-## Contribution Guidelines
-
-Contributions to enhance the functionality and performance of the Hospital Management System are welcomed. To contribute:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Make your changes, ensuring alignment with the project structure.
-4. Thoroughly test to avoid introducing bugs.
-5. Submit a pull request with a clear description of your changes.
-
-Let's collaborate to make healthcare management more efficient and accessible!
-
 
 
 
